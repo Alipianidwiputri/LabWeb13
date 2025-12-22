@@ -1,7 +1,5 @@
 # LabWeb13
 
-# Lab13Web.
-
  - **Nama    : Alipiani Dwi Putri**
  - **Nim     : 312410691**
  - **Matkul  : Pemrograman Web**
