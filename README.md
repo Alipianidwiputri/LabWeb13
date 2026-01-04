@@ -490,7 +490,8 @@ if ($start > 1) {
 ##  Screenshots
 
 ### 1. Halaman Data Barang (dengan Pagination)
-<img width="799" height="698" alt="Cuplikan layar 2026-01-04 093623" src="https://github.com/user-attachments/assets/5c6a3aef-cdbf-497b-b530-e6e8e4178b49" />
+<img width="801" height="889" alt="image" src="https://github.com/user-attachments/assets/7f37ddcb-2a69-44ce-8aa5-04d454ae4f40" />
+
 
 - Tabel data dengan 10 record per halaman
 - Pagination buttons di bawah
@@ -511,7 +512,8 @@ if ($start > 1) {
 - Button submit & cancel
 
 ### 4. Pagination Navigation
-<img width="799" height="234" alt="Cuplikan layar 2026-01-04 093623" src="https://github.com/user-attachments/assets/31b3bbc6-b4da-42b4-9fc3-8ab55c83bf74" />
+<img width="1919" height="951" alt="image" src="https://github.com/user-attachments/assets/816195cd-3488-407f-b364-2ef3b686eafa" />
+
 
 - Previous & Next buttons
 - Nomor halaman dengan active indicator
@@ -556,7 +558,8 @@ Fitur pencarian memungkinkan user untuk mencari data barang berdasarkan **nama**
 
 ### 1. Form Pencarian (Tampilan Awal)
 
-<img width="874" height="374" alt="image" src="https://github.com/user-attachments/assets/829ce04b-4667-4183-84f9-7aea21b7eb0b" />
+<img width="1644" height="948" alt="image" src="https://github.com/user-attachments/assets/2a18fc66-349a-4250-8d29-d0002990fc7c" />
+
 
 **Deskripsi:**
 - Search box dengan border pink rounded
@@ -568,12 +571,12 @@ Fitur pencarian memungkinkan user untuk mencari data barang berdasarkan **nama**
 
 ### 2. Hasil Pencarian - Data Ditemukan
 
-<img width="945" height="605" alt="image" src="https://github.com/user-attachments/assets/cb3f98ae-ad22-4493-8154-28261f162f0a" />
+<img width="1125" height="810" alt="image" src="https://github.com/user-attachments/assets/5a2e3916-fedf-4512-a71f-65f43a0eea1a" />
 
 
 **Deskripsi:**
 - Keyword "Samsung" ditemukan
-- Info box menampilkan: "Hasil pencarian untuk: **Samsung** (3 data ditemukan)"
+- Info box menampilkan: "Hasil pencarian untuk: **Samsung** (4 data ditemukan)"
 - Data yang match ditampilkan dalam tabel
 - Keyword di-highlight dengan background kuning
 - Button "✖ Reset" muncul untuk clear pencarian
