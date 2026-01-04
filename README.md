@@ -11,7 +11,7 @@
 
 ---
 
-## 📋 Deskripsi
+##  Deskripsi
 
 Praktikum ini merupakan implementasi sistem **Pagination** pada aplikasi manajemen data barang menggunakan PHP dan MySQL. Pagination digunakan untuk membatasi tampilan data menjadi beberapa halaman dengan navigasi yang user-friendly.
 
@@ -563,7 +563,7 @@ Fitur pencarian memungkinkan user untuk mencari data barang berdasarkan **nama**
 
 **Deskripsi:**
 - Search box dengan border pink rounded
-- Placeholder: "🔍 Cari nama barang atau kategori..."
+- Placeholder: "Cari nama barang atau kategori..."
 - Button "Cari" dengan gradient pink
 - Posisi di atas tabel data
 
@@ -584,7 +584,7 @@ Fitur pencarian memungkinkan user untuk mencari data barang berdasarkan **nama**
 
 ---
 
-## 💻 Implementasi Teknis
+## Implementasi Teknis
 
 ### Query SQL
 
@@ -636,7 +636,7 @@ if (!empty($search)) {
     <input 
         type="text" 
         name="search" 
-        placeholder="🔍 Cari nama barang atau kategori..."
+        placeholder="Cari nama barang atau kategori..."
         value="<?php echo htmlspecialchars($search); ?>"
     >
     <button type="submit">Cari</button>
@@ -671,7 +671,7 @@ mark {
 
 ---
 
-## 🎯 Cara Penggunaan
+## Cara Penggunaan
 
 ### Langkah 1: Buka Halaman Data Barang
 ```
@@ -696,7 +696,7 @@ http://localhost/LAB11_PHP_OOP/module/artikel/
 
 ---
 
-## 🧪 Contoh Pencarian
+## Contoh Pencarian
 
 | Keyword | Hasil | Keterangan |
 |---------|-------|------------|
