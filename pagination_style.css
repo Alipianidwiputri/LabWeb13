@@ -1,0 +1,180 @@
+/* ========== PAGINATION STYLES ========== */
+
+/* Container info pagination */
+.info-pagination {
+    text-align: center;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Container pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 25px 0;
+    padding: 20px 0;
+    flex-wrap: wrap;
+}
+
+/* Style untuk link dan span pagination */
+.page-link {
+    display: inline-block;
+    padding: 10px 16px;
+    text-decoration: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 14px;
+    min-width: 45px;
+    text-align: center;
+    border: 2px solid transparent;
+}
+
+/* Hover effect untuk link */
+.page-link:hover:not(.disabled):not(.active) {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Style untuk halaman aktif */
+.page-link.active {
+    background-color: #2e7d32;
+    font-weight: bold;
+    border: 2px solid #1b5e20;
+    cursor: default;
+    transform: scale(1.05);
+}
+
+/* Style untuk link disabled (Previous/Next yang tidak aktif) */
+.page-link.disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+    color: #666;
+}
+
+/* Dots untuk range halaman */
+.page-dots {
+    padding: 10px 8px;
+    color: #666;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Responsive untuk mobile */
+@media screen and (max-width: 768px) {
+    .pagination {
+        gap: 5px;
+    }
+    
+    .page-link {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-width: 35px;
+    }
+    
+    .info-pagination {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
+
+/* Animasi untuk button Previous dan Next */
+.page-link:not(.disabled):not(.active):active {
+    transform: scale(0.95);
+}
+
+/* Style tambahan untuk tabel agar sesuai dengan pagination */
+.content {
+    padding: 20px;
+}
+
+.content h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Tombol Tambah Barang */
+.btn-tambah {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2196F3;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+}
+
+.btn-tambah:hover {
+    background-color: #0b7dda;
+}
+
+/* Style untuk tabel data */
+table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table.data thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+table.data th,
+table.data td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+table.data tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table.data tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* Tombol aksi dalam tabel */
+.btn-ubah,
+.btn-hapus {
+    display: inline-block;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+    margin: 2px;
+    transition: all 0.3s;
+}
+
+.btn-ubah {
+    background-color: #FFC107;
+    color: white;
+}
+
+.btn-ubah:hover {
+    background-color: #e0a800;
+}
+
+.btn-hapus {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-hapus:hover {
+    background-color: #da190b;
+}
