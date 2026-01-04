@@ -723,8 +723,4 @@ http://localhost/LAB11_PHP_OOP/module/artikel/
 
 ---
 
-
-
-**Praktikum 14 - Pemrograman Web 1**
-
 </div>
