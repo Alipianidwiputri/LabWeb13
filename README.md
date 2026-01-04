@@ -1,5 +1,7 @@
 
-#  LabWeb13 - Praktikum 13 - Implementasi Pagination dengan PHP
+#  LabWeb13 & LabWeb14
+
+# Praktikum 13 - Implementasi Pagination dengan PHP
 
 **Nama:** Alipiani Dwi Putri  
 **NIM:** 312410691  
@@ -518,5 +520,208 @@ if ($start > 1) {
 ---
 
 **© 2026 - Praktikum Pemrograman Web 1**
+
+</div>
+
+
+
+
+
+
+
+
+## **Fitur Pencarian Data - Praktikum 14**
+
+##  Deskripsi Singkat
+
+Fitur pencarian memungkinkan user untuk mencari data barang berdasarkan **nama** atau **kategori** dengan cepat. Pencarian menggunakan SQL `LIKE` dengan wildcard untuk mencocokkan substring, dan hasil pencarian di-highlight untuk kemudahan identifikasi.
+
+---
+
+##  Fitur Utama
+
+| Fitur | Deskripsi |
+|-------|-----------|
+|  **Search Box** | Form pencarian dengan tema pink soft |
+|  **Multi-Column Search** | Cari berdasarkan nama atau kategori |
+|  **Highlight Keyword** | Keyword di-highlight dengan background kuning |
+|  **Info Hasil** | Menampilkan jumlah data yang ditemukan |
+|  **Reset Button** | Kembali ke semua data dengan 1 klik |
+|  **Pagination** | Hasil pencarian tetap ter-paginasi |
+|  **Empty State** | Pesan user-friendly jika tidak ada hasil |
+
+---
+
+## Screenshots
+
+### 1. Form Pencarian (Tampilan Awal)
+
+<img width="874" height="374" alt="image" src="https://github.com/user-attachments/assets/829ce04b-4667-4183-84f9-7aea21b7eb0b" />
+
+**Deskripsi:**
+- Search box dengan border pink rounded
+- Placeholder: "🔍 Cari nama barang atau kategori..."
+- Button "Cari" dengan gradient pink
+- Posisi di atas tabel data
+
+---
+
+### 2. Hasil Pencarian - Data Ditemukan
+
+<img width="945" height="605" alt="image" src="https://github.com/user-attachments/assets/cb3f98ae-ad22-4493-8154-28261f162f0a" />
+
+
+**Deskripsi:**
+- Keyword "Samsung" ditemukan
+- Info box menampilkan: "Hasil pencarian untuk: **Samsung** (3 data ditemukan)"
+- Data yang match ditampilkan dalam tabel
+- Keyword di-highlight dengan background kuning
+- Button "✖ Reset" muncul untuk clear pencarian
+- Pagination muncul jika hasil > 10 data
+
+---
+
+## 💻 Implementasi Teknis
+
+### Query SQL
+
+**Tanpa Pencarian:**
+```sql
+SELECT * FROM data_barang 
+ORDER BY id DESC 
+LIMIT 10 OFFSET 0;
+```
+
+**Dengan Pencarian:**
+```sql
+SELECT * FROM data_barang 
+WHERE nama LIKE '%Samsung%' 
+   OR kategori LIKE '%Samsung%'
+ORDER BY id DESC 
+LIMIT 10 OFFSET 0;
+```
+
+### PHP Logic
+
+```php
+// Terima input
+$search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+
+// Conditional query
+if (!empty($search)) {
+    $sql = "SELECT * FROM data_barang 
+            WHERE nama LIKE '%$search%' 
+            OR kategori LIKE '%$search%'
+            ORDER BY id DESC 
+            LIMIT $per_page OFFSET $offset";
+} else {
+    $sql = "SELECT * FROM data_barang 
+            ORDER BY id DESC 
+            LIMIT $per_page OFFSET $offset";
+}
+
+// Highlight hasil
+if (!empty($search)) {
+    $nama_display = str_ireplace($search, '<mark>' . $search . '</mark>', $nama_display);
+}
+```
+
+### HTML Form
+
+```html
+<form method="GET" action="">
+    <input 
+        type="text" 
+        name="search" 
+        placeholder="🔍 Cari nama barang atau kategori..."
+        value="<?php echo htmlspecialchars($search); ?>"
+    >
+    <button type="submit">Cari</button>
+    <?php if (!empty($search)): ?>
+        <a href="index.php">✖ Reset</a>
+    <?php endif; ?>
+</form>
+```
+
+### CSS Styling
+
+```css
+.search-input {
+    padding: 12px 20px;
+    border: 2px solid #ffe4f1;
+    border-radius: 25px;
+    font-size: 15px;
+}
+
+.search-input:focus {
+    border-color: #ff99cc;
+    box-shadow: 0 0 15px rgba(255, 153, 204, 0.3);
+}
+
+mark {
+    background: linear-gradient(135deg, #fff59d 0%, #ffe082 100%);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+```
+
+---
+
+## 🎯 Cara Penggunaan
+
+### Langkah 1: Buka Halaman Data Barang
+```
+http://localhost/LAB11_PHP_OOP/module/artikel/
+```
+
+### Langkah 2: Input Keyword
+- Ketik keyword di search box
+- Contoh: "Samsung", "HP", "Komputer", "Elektronik"
+
+### Langkah 3: Klik Tombol "Cari"
+- Atau tekan Enter
+
+### Langkah 4: Lihat Hasil
+- Data yang match akan ditampilkan
+- Keyword ter-highlight
+- Info jumlah hasil muncul
+
+### Langkah 5: Reset (Optional)
+- Klik button "✖ Reset"
+- Kembali ke tampilan semua data
+
+---
+
+## 🧪 Contoh Pencarian
+
+| Keyword | Hasil | Keterangan |
+|---------|-------|------------|
+| `Samsung` | 3 data | HP Samsung Galaxy A54, HP Samsung S23, dll |
+| `HP` | 15 data | Semua HP (Samsung, Oppo, Xiaomi) |
+| `Komputer` | 8 data | Laptop, Monitor, Keyboard, dll |
+| `Elektronik` | 20 data | Semua kategori Elektronik |
+| `iPhone` | 0 data | Empty state (data tidak ada) |
+| `Rp` | 0 data | Pencarian tidak di kolom harga |
+
+---
+
+##  Color Scheme
+
+| Element | Color | Hex Code |
+|---------|-------|----------|
+| Search Box Border | Pink Light | `#ffe4f1` |
+| Search Box Focus | Pink Medium | `#ff99cc` |
+| Button Background | Pink Gradient | `#ff85c0` → `#ffb3d9` |
+| Highlight Background | Yellow Gradient | `#fff59d` → `#ffe082` |
+| Info Box Background | Pink Very Light | `#ffe4f1` → `#fff0f8` |
+| Reset Button | Pink Soft | `#ffa6d5` → `#ffc2e0` |
+
+
+---
+
+
+
+**Praktikum 14 - Pemrograman Web 1**
 
 </div>
