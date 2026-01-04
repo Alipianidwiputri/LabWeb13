@@ -1,106 +1,522 @@
-# LabWeb13
 
- - **Nama    : Alipiani Dwi Putri**
- - **Nim     : 312410691**
- - **Matkul  : Pemrograman Web**
- - **Dosen   : Agung Nugroho S.Kom,.M.Kom**
+#  LabWeb13 - Praktikum 13 - Implementasi Pagination dengan PHP
 
-# *1. Pengertian Pagination*
-Pagination adalah teknik untuk membagi data yang banyak menjadi beberapa halaman agar lebih mudah dibaca dan diakses. Tujuannya adalah:
- - Membatasi jumlah data per halaman
- - Meningkatkan kecepatan loading
- - Memudahkan navigasi data
+**Nama:** Alipiani Dwi Putri  
+**NIM:** 312410691  
+**Kelas:** TI 24 A2  
+**Mata Kuliah:** Pemrograman Web 1  
+**Dosen:** Agung Nugroho, S.Kom., M.Kom.
 
-# *2. Prinsip Dasar Pagination di MySQL*
-Menggunakan dua klausa SQL:
- - **LIMIT**: Membatasi jumlah data yang ditampilkan
- - **OFFSET:** Menentukan posisi awal pengambilan data
-   Conntoh Query:
+---
+
+## 📋 Deskripsi
+
+Praktikum ini merupakan implementasi sistem **Pagination** pada aplikasi manajemen data barang menggunakan PHP dan MySQL. Pagination digunakan untuk membatasi tampilan data menjadi beberapa halaman dengan navigasi yang user-friendly.
+
+Proyek ini merupakan lanjutan dari [Praktikum 11&12 (PHP OOP)](https://github.com/Alipianidwiputri/Lab11Web) dengan penambahan fitur pagination dan berbagai enhancement UI/UX.
+
+
+
+## Fitur Utama 
+
+###  **Pagination System**
+- Menampilkan **10 data per halaman**
+- Navigasi **Previous** dan **Next** button
+- **Nomor halaman** yang dapat diklik langsung
+- **Active page indicator** (highlight halaman aktif)
+- **Disabled state** untuk Previous/Next di halaman pertama/terakhir
+- Info jumlah data: *"Menampilkan 1-10 dari 35 data"*
+- Smart page range: `1 ... 3 4 [5] 6 7 ... 10`
+
+###  **CRUD Operations**
+-  **Create** - Tambah data barang baru
+-  **Read** - Tampilkan data dengan pagination
+
+###  **Authentication System**
+- **Login** dengan session management
+- **Logout** dengan session destroy
+- **Dynamic menu** berubah sesuai status login
+- **Welcome message** setelah login berhasil
+- **Demo account** untuk testing
+
+---
+
+## Struktur Project
+
+```
+LAB11_PHP_OOP/
+├── 📁 assets/
+│   └── style.css                    # CSS dengan tema Pink Soft
+├── 📁 class/
+│   ├── Database.php                 # Class untuk koneksi database
+│   └── Form.php                     # Class untuk handling form
+├── 📁 images/
+│   ├── hp_oppo.jpg
+│   ├── hp_samsung.jpg
+│   └── hp_xiaomi.jpg
+├── 📁 module/
+│   ├── 📁 artikel/
+│   │   ├── index.php               # Halaman data barang (dengan pagination)
+│   │   ├── tambah.php              # Form tambah barang
+│   │   ├── ubah.php                # Form edit barang
+│   │   └── hapus.php               # Proses hapus barang
+│   └── 📁 user/
+│       ├── login.php               # Halaman login
+│       ├── logout.php              # Proses logout
+│       └── profile.php             # Halaman profile user
+├── 📁 template/
+│   ├── header.php                  # Header dengan sidebar
+│   ├── footer.php                  # Footer template
+│   └── sidebar.php                 # Sidebar navigation
+├── .htaccess                       # URL rewriting
+├── config.php                      # Konfigurasi database
+├── index.php                       # Landing page
+└── README.md                       # Dokumentasi project
+```
+
+---
+
+### 3️ **Setup Database**
+
+1. Buka **phpMyAdmin**: `http://localhost/phpmyadmin`
+2. Buat database baru: `latihan1`
+3. Import SQL atau jalankan query berikut:
+
 ```sql
--- Ambil 10 data pertama
-SELECT * FROM table_barang LIMIT 10;
+-- Buat tabel data_barang
+CREATE TABLE `data_barang` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kategori` varchar(50) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `harga_beli` decimal(10,2) NOT NULL,
+  `harga_jual` decimal(10,2) NOT NULL,
+  `stok` int(11) NOT NULL,
+  `tanggal_input` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Ambil data ke-11 sampai ke-20
-SELECT * FROM table_barang LIMIT 10 OFFSET 10;
--- atau
-SELECT * FROM table_barang LIMIT 10, 20;
+-- Buat tabel users
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Insert demo users
+INSERT INTO `users` (`username`, `password`, `nama`, `email`) VALUES
+('admin', 'admin123', 'Administrator', 'admin@example.com'),
+('alipiani', 'password123', 'Alipiani Dwi Putri', 'alipiani@example.com');
+
+-- Insert data dummy (untuk testing pagination)
+INSERT INTO `data_barang` (`kategori`, `nama`, `harga_beli`, `harga_jual`, `stok`) VALUES
+('Elektronik', 'HP Samsung Galaxy A54', 4500000.00, 5200000.00, 25),
+('Elektronik', 'HP Oppo Reno 8', 3800000.00, 4500000.00, 30),
+('Elektronik', 'HP Xiaomi Redmi Note 12', 2500000.00, 3000000.00, 40),
+('Komputer', 'Laptop Asus VivoBook', 6500000.00, 7500000.00, 15),
+('Komputer', 'Monitor LG 24 Inch', 1800000.00, 2200000.00, 28);
+-- ... tambahkan 25 data lagi untuk total 30+ data
 ```
 
-# *3. Logika Perhitungan Halaman*
-Langkah-langkah menentukan jumlah halaman:
-1. Hitung total data: `SELECT COUNT(*) FROM table_barang`
-2. Tentukan jumlah data per halaman (misal: 10)
-3. Hitung jumlah halaman: `total_data ÷ data_per_halaman`
-4. Bulatkan ke atas jika hasilnya desimal
-   **Contoh**
-    - Total data: 30
-    - Data per halaman: 10
-    - Jumlah halaman: `30 ÷ 10 = 3`
+### 4️ **Konfigurasi Database**
 
-# *4. Implementasi di PHP (index.php)*
-**Bagian 1: Menghitung Jumlah Halaman**
+Edit file `config.php`:
 ```php
-$sql_count = "SELECT COUNT(*) FROM data_barang";
-$result_count = mysqli_query($conn, $sql_count);
-$r_data = mysqli_fetch_row($result_count);
-$count = $r_data[0]; // Total data
-
-$per_page = 1; // Data per halaman (bisa diubah)
-$num_page = ceil($count / $per_page); // Jumlah halaman
-```
-
-**Bagian 2: Menentukan Halaman Aktif**
-```php
-if (isset($_GET['page'])) {
-    $page = $_GET['page']; // Halaman dari URL
-    $offset = ($page - 1) * $per_page; // Hitung offset
-} else {
-    $offset = 0; // Default: halaman pertama
-    $page = 1;
+<?php
+if (!defined('DB_HOST')) {
+    define('DB_HOST', 'localhost');
 }
-
-$sql .= " LIMIT {$offset}, {$limit}"; // Tambah LIMIT ke query
+if (!defined('DB_USER')) {
+    define('DB_USER', 'root');
+}
+if (!defined('DB_PASS')) {
+    define('DB_PASS', '');
+}
+if (!defined('DB_NAME')) {
+    define('DB_NAME', 'latihan1');
+}
+?>
 ```
 
-# *5. Membuat Tampilan Pagination*
-**Tombol Nomor Halaman**
-``php
-<ul class="pagination">
-    <?php for ($i = 1; $i <= $num_page; $i++): ?>
-        <?php 
-        $link = "?page={$i}";
-        if (!empty($q)) $link .= "&q={$q}"; // Pertahankan parameter pencarian
-        $class = ($page == $i ? 'active' : ''); // Tandai halaman aktif
-        ?>
-        <li><a class="<?= $class ?>" href="<?= $link ?>"><?= $i ?></a></li>
-    <?php endfor; ?>
-</ul>
+### 5️ **Jalankan Aplikasi**
+
+1. Start **Apache** dan **MySQL** di XAMPP Control Panel
+2. Buka browser
+3. Akses: `http://localhost/LAB11_PHP_OOP/module/artikel/`
+
+---
+
+##  Cara Penggunaan
+
+### **1. Akses Halaman Data Barang**
+```
+http://localhost/LAB11_PHP_OOP/module/artikel/index.php
 ```
 
-**CSS untuk Styling**
+### **2. Login (Optional)**
+- Klik menu **"Login"** di sidebar
+- Gunakan demo account:
+  - Username: `admin`
+  - Password: `admin123`
+
+### **3. Kelola Data Barang**
+- **Tambah:** Klik tombol "➕ Tambah Barang"
+- **Edit:** Klik tombol "Ubah" pada data yang ingin diedit
+- **Hapus:** Klik tombol "Hapus" (akan ada konfirmasi)
+
+### **4. Navigasi Pagination**
+- Klik **Previous** untuk halaman sebelumnya
+- Klik **Next** untuk halaman berikutnya
+- Klik **nomor halaman** untuk langsung ke halaman tersebut
+
+---
+
+##  Logika Pagination
+
+### **Konsep Dasar**
+
+Pagination membagi data menjadi beberapa halaman dengan menggunakan SQL `LIMIT` dan `OFFSET`.
+
+### **Rumus Perhitungan**
+
+```php
+// Data per halaman
+$per_page = 10;
+
+// Halaman saat ini
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Hitung offset (data mulai dari mana)
+$offset = ($page - 1) * $per_page;
+
+// Hitung total halaman
+$total_pages = ceil($row_count / $per_page);
+
+// Query dengan LIMIT dan OFFSET
+$sql = "SELECT * FROM data_barang LIMIT $per_page OFFSET $offset";
+```
+
+### **Contoh Perhitungan**
+
+| Halaman | Per Page | Offset | Data Ditampilkan |
+|---------|----------|--------|------------------|
+| 1 | 10 | 0 | Record 1-10 |
+| 2 | 10 | 10 | Record 11-20 |
+| 3 | 10 | 20 | Record 21-30 |
+| 4 | 10 | 30 | Record 31-40 |
+
+**Jika total data = 35:**
+- Total halaman = `ceil(35 / 10)` = **4 halaman**
+- Halaman 1: Data 1-10
+- Halaman 2: Data 11-20
+- Halaman 3: Data 21-30
+- Halaman 4: Data 31-35 (hanya 5 data)
+
+### **Implementasi Previous & Next**
+
+```php
+// Previous Button
+<?php if ($page > 1): ?>
+    <a href="?page=<?php echo $page - 1; ?>">Previous</a>
+<?php else: ?>
+    <span class="disabled">Previous</span>
+<?php endif; ?>
+
+// Next Button
+<?php if ($page < $total_pages): ?>
+    <a href="?page=<?php echo $page + 1; ?>">Next</a>
+<?php else: ?>
+    <span class="disabled">Next</span>
+<?php endif; ?>
+```
+
+---
+
+##  Fitur Tambahan Praktikum 13 (Enhancement)
+
+Berikut adalah fitur-fitur tambahan yang saya implementasikan di luar requirement praktikum:
+
+###  **1. Pink Soft Theme**
+
+**Deskripsi:** Tema visual dengan warna pink yang soft dan profesional.
+
+**Implementasi:**
+- Gradient pink: `#ff85c0` → `#ffb3d9`
+- Background: `#ffeef8` → `#ffe4f1` → `#ffd4ea`
+- Rounded corners: 10-25px radius
+- Soft shadows dengan warna pink
+- Custom pink scrollbar
+
+**File:** `assets/style.css`
+
+**Preview:**
 ```css
-ul.pagination li a {
-    padding: 8px 16px;
-    text-decoration: none;
-    transition: background-color .3s;
-}
-
-ul.pagination li a.active {
-    background-color: #428bca; /* Warna biru untuk halaman aktif */
-    color: white;
+.top-header {
+    background: linear-gradient(135deg, #ff85c0 0%, #ffb3d9 100%);
 }
 ```
 
-# *6. Latihan: Menambahkan Tombol Previous dan Next*
-Untuk melengkapi pagination:
- - Tombol Previous `(&laquo;)`: harus menuju ke halaman `$page - 1`
- - Tombol Next `(&raquo;)`: harus menuju ke halaman `$page + 1`
-**Implementasi yang harus ditambahkan:**
-1. Cek apakah halaman sebelumnya ada (halaman > 1)
-2. Cek apakah halaman berikutnya ada (halaman < total_halaman)
-3. Nonaktifkan tombol jika sudah di halaman pertama/terakhir
+---
 
-# *7. Keuntungan Pagination*
- - Performansi: Query lebih cepat karena mengambil data terbatas
- - User Experience: Navigasi data lebih terstruktur
- - SEO Friendly: Halaman terpisah untuk konten yang banyak
+###  **2. Authentication System**
+
+**Deskripsi:** Sistem login dan logout dengan session management.
+
+**Fitur:**
+- Login form dengan validasi
+- Session untuk tracking user yang login
+- Logout dengan session destroy
+- Demo account untuk testing
+- Alert notifikasi login berhasil/gagal
+
+**File:**
+- `module/user/login.php` - Form login
+- `module/user/logout.php` - Proses logout
+
+**Demo Account:**
+```
+Username: admin
+Password: admin123
+```
+
+**Flow:**
+```
+Login → Set Session → Redirect → Welcome Message
+Logout → Destroy Session → Redirect → Logout Message
+```
+
+---
+
+###  **3. Dynamic Menu Navigation**
+
+**Deskripsi:** Menu sidebar yang berubah otomatis berdasarkan status login.
+
+**Kondisi:**
+- **Belum Login:** Menu menampilkan " Login"
+- **Sudah Login:** Menu menampilkan " Profile" + "Logout"
+
+**Implementasi:**
+```php
+<?php if (isset($_SESSION['username'])): ?>
+    <!-- Menu untuk user yang sudah login -->
+    <li><a href="profile.php">Profile</a></li>
+    <li><a href="logout.php">Logout</a></li>
+<?php else: ?>
+    <!-- Menu untuk user yang belum login -->
+    <li><a href="login.php"> Login</a></li>
+<?php endif; ?>
+```
+
+**File:** `template/header.php`
+
+---
+
+###  **4. Info Pagination**
+
+**Deskripsi:** Informasi jumlah data yang sedang ditampilkan.
+
+**Format:** *"Menampilkan 1 - 10 dari 35 data"*
+
+**Implementasi:**
+```php
+<div class="info-pagination">
+    Menampilkan <?php echo $offset + 1; ?> - 
+    <?php echo min($offset + $per_page, $row_count); ?> 
+    dari <?php echo $row_count; ?> data
+</div>
+```
+
+**Manfaat:**
+- User tahu posisi data yang sedang dilihat
+- User tahu total keseluruhan data
+- Meningkatkan UX
+
+---
+
+**Fitur:**
+- Sticky sidebar (tetap saat scroll)
+- Responsive (mobile → full width)
+- Active menu indicator
+- Icon untuk setiap menu
+
+**File:** `template/header.php`, `assets/style.css`
+
+---
+
+###  **6. Alert Notifications**
+
+**Deskripsi:** Notifikasi visual untuk feedback user action.
+
+**Jenis Alert:**
+- **Success** (hijau) - Data berhasil ditambah/edit/hapus
+- **Error** (merah) - Login gagal, error sistem
+- **Info** (biru) - Informasi umum
+
+**Implementasi:**
+```php
+<?php if (isset($_GET['status']) && $_GET['status'] === 'success'): ?>
+    <div class="alert alert-success">
+        Data barang berhasil ditambahkan! 
+    </div>
+<?php endif; ?>
+```
+
+**Styling:**
+```css
+.alert-success {
+    background: linear-gradient(135deg, #66d9aa 0%, #8ee5bf 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+}
+```
+
+---
+
+###  **7. Hover & Animation Effects**
+
+**Deskripsi:** Animasi smooth untuk meningkatkan interaktivitas.
+
+**Implementasi:**
+
+**Button Hover:**
+```css
+.btn-tambah:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 133, 192, 0.4);
+}
+```
+
+**Table Row Hover:**
+```css
+table.data tbody tr:hover {
+    background-color: #fff0f8;
+}
+```
+
+**Page Link Hover:**
+```css
+.page-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 133, 192, 0.4);
+}
+```
+
+---
+
+###  **8. Smart Page Range**
+
+**Deskripsi:** Menampilkan range halaman yang smart, tidak semua nomor ditampilkan.
+
+**Contoh:**
+- Total 20 halaman, di halaman 10:
+  ```
+  Previous  1 ... 8 9 [10] 11 12 ... 20  Next
+  ```
+
+**Logic:**
+```php
+$range = 2; // Jumlah halaman di kiri & kanan
+$start = max(1, $page - $range);
+$end = min($total_pages, $page + $range);
+
+// Tampilkan dots jika ada gap
+if ($start > 1) {
+    echo '<a href="?page=1">1</a>';
+    if ($start > 2) {
+        echo '<span>...</span>';
+    }
+}
+```
+
+---
+
+### **9. Responsive Design**
+
+**Deskripsi:** Tampilan menyesuaikan ukuran layar device.
+
+**Breakpoints:**
+```css
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: relative;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+}
+```
+
+**Fitur Responsive:**
+- Sidebar full width di mobile
+- Font size lebih kecil di mobile
+- Padding & margin menyesuaikan
+- Table scrollable horizontal
+
+---
+
+###  **10. Active Page Indicator**
+
+**Deskripsi:** Halaman yang sedang aktif diberi highlight khusus.
+
+**Implementasi:**
+```php
+<?php if ($i == $page): ?>
+    <span class="page-link active"><?php echo $i; ?></span>
+<?php else: ?>
+    <a href="?page=<?php echo $i; ?>" class="page-link"><?php echo $i; ?></a>
+<?php endif; ?>
+```
+
+**Styling:**
+```css
+.page-link.active {
+    background: linear-gradient(135deg, #ff66a3 0%, #ff85c0 100%);
+    font-weight: bold;
+    transform: scale(1.05);
+}
+```
+
+---
+
+##  Screenshots
+
+### 1. Halaman Data Barang (dengan Pagination)
+<img width="799" height="698" alt="Cuplikan layar 2026-01-04 093623" src="https://github.com/user-attachments/assets/5c6a3aef-cdbf-497b-b530-e6e8e4178b49" />
+
+- Tabel data dengan 10 record per halaman
+- Pagination buttons di bawah
+- Info jumlah data ditampilkan
+
+### 2. Halaman Login
+<img width="729" height="498" alt="Cuplikan layar 2026-01-04 093645" src="https://github.com/user-attachments/assets/f879bd1f-93bd-4237-ad36-4080d17730b0" />
+
+- Form login dengan tema pink
+- Demo account info
+- Link kembali ke data barang
+
+### 3. Form Tambah Barang
+<img width="725" height="505" alt="Cuplikan layar 2026-01-04 093634" src="https://github.com/user-attachments/assets/48ff00e8-2c24-4dd6-a04f-949fb96658c4" />
+
+- Form input dengan styling pink
+- Validation pada setiap field
+- Button submit & cancel
+
+### 4. Pagination Navigation
+<img width="799" height="234" alt="Cuplikan layar 2026-01-04 093623" src="https://github.com/user-attachments/assets/31b3bbc6-b4da-42b4-9fc3-8ab55c83bf74" />
+
+- Previous & Next buttons
+- Nomor halaman dengan active indicator
+- Disabled state untuk first/last page
+
+---
+
+**© 2026 - Praktikum Pemrograman Web 1**
+
+</div>
